@@ -23,14 +23,16 @@ body {
 }
 
 #containerJogo {
+    width: 100%;
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    background-color: #e9ebee;
 }
 
 canvas {
+    max-width: 100%;
+    max-height: 100%;
     border: none;
     display: block;
     border-radius: 15px;
@@ -114,18 +116,81 @@ canvas {
     box-shadow: 0 10px 20px rgba(0,0,0,0.2);
 }
 
+.escondido {
+    display: none !important;
+}
+
+/* --- ESTILOS DO LAYOUT PRINCIPAL DO SISTEMA --- */
+#sistemaContainer {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+}
+
+#menuLateral {
+    width: 250px;
+    background-color: var(--cor-secundaria);
+    color: var(--cor-texto);
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    box-shadow: 5px 0 15px rgba(0,0,0,0.2);
+    z-index: 5;
+    flex-shrink: 0;
+    transition: width 0.3s ease, padding 0.3s ease;
+}
+
+#menuLateral .menu-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 40px;
+    overflow: hidden; /* Garante que o texto não vaze durante a animação */
+}
+
+#menuLateral .menu-header h2 {
+    text-align: center;
+    font-size: 32px;
+    margin: 0;
+    white-space: nowrap; /* Impede que o texto quebre a linha */
+}
+
+#menuLateral ul {
+    list-style: none;
+    padding: 0;
+    flex-grow: 1;
+}
+
+#menuLateral ul li a {
+    display: block;
+    color: var(--cor-texto);
+    text-decoration: none;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+}
+
+#menuLateral ul li a:hover, #menuLateral ul li a.active {
+    background-color: var(--cor-primaria);
+}
+
+#menuLateral .menu-footer {
+    text-align: center;
+}
+
 #botaoLogout {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    padding: 10px 15px;
+    width: 100%;
+    padding: 15px;
+    font-size: 16px;
+    font-weight: 700;
     background-color: var(--cor-perigo);
     color: var(--cor-texto);
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    font-family: 'Poppins', sans-serif;
     transition: all 0.3s ease;
+    white-space: nowrap;
 }
 
 #botaoLogout:hover {
@@ -134,24 +199,79 @@ canvas {
     box-shadow: 0 5px 10px rgba(0,0,0,0.2);
 }
 
-.escondido {
-    display: none !important;
+#conteudoPrincipal {
+    flex-grow: 1;
+    background-color: #e9ebee;
+    padding: 30px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
 }
 
-/* --- ADIÇÃO: REGRAS PARA TELAS PEQUENAS (RESPONSIVIDADE) --- */
-@media (max-width: 600px) {
-    #telaLogin h1 {
-        font-size: 32px;
-        text-align: center;
-    }
-
-    #telaLogin form {
-        width: 85%;
-        padding: 30px;
-    }
-
-    #botaoLogout {
-        padding: 12px 18px;
-        font-size: 16px;
-    }
+.secao-conteudo {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
+
+/* --- ESTILOS DO MENU COLAPSÁVEL --- */
+#toggleMenuBtn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0 15px 0 0;
+    transition: transform 0.3s ease; /* Adiciona animação de rotação */
+}
+
+#toggleMenuBtn.ativo {
+    transform: rotate(90deg); /* Gira o ícone quando o menu está aberto */
+}
+
+/* ALTERADO: Estado do menu quando estiver fechado */
+#sistemaContainer.menu-fechado #menuLateral {
+    width: 60px; /* Largura mínima para caber o botão */
+    padding: 20px 0;
+}
+
+/* ALTERADO: Esconde o conteúdo do menu, mas mantém o header */
+#sistemaContainer.menu-fechado #menuLateral .menu-header {
+    justify-content: center; /* Centraliza o botão */
+}
+#sistemaContainer.menu-fechado #menuLateral .menu-header h2,
+#sistemaContainer.menu-fechado #menuLateral ul,
+#sistemaContainer.menu-fechado #menuLateral .menu-footer {
+    display: none; /* Esconde o resto */
+}
+
+#sistemaContainer.menu-fechado #toggleMenuBtn {
+    padding: 0;
+}
+
+/* ... (O resto do seu CSS continua aqui) ... */
+#usuarios h1 { color: #333; margin-bottom: 20px; flex-shrink: 0; }
+.ferramentas-tabela { margin-bottom: 20px; }
+#filtroUsuarios { width: 100%; max-width: 400px; padding: 12px 15px; font-size: 16px; border-radius: 8px; border: 1px solid #ddd; font-family: 'Poppins', sans-serif; }
+#filtroUsuarios:focus { outline: 2px solid var(--cor-primaria); border-color: transparent; }
+.tabela-container { background-color: white; border-radius: 15px; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1); padding: 20px; overflow-x: auto; flex-grow: 1; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+table thead { background-color: #f7f9fc; }
+table th, table td { padding: 15px; text-align: left; border-bottom: 1px solid #e9ebee; }
+table th { color: var(--cor-secundaria); font-weight: 700; }
+table tbody tr:hover { background-color: #f7f9fc; }
+.status { padding: 5px 10px; border-radius: 20px; font-weight: 700; font-size: 12px; color: white; }
+.status.ativo { background-color: #28a745; }
+.status.inativo { background-color: #6c757d; }
+.status.pendente { background-color: #ffc107; color: #333; }
+#relatorios h1 { color: #333; margin-bottom: 20px; }
+.indicadores-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; }
+.cartao-indicador { background-color: white; border-radius: 15px; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1); padding: 25px; transition: transform 0.3s ease, box-shadow 0.3s ease; }
+.cartao-indicador:hover { transform: translateY(-5px); box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15); }
+.cartao-indicador h3 { margin: 0 0 10px 0; font-size: 18px; color: #6c757d; }
+.cartao-indicador .numero-indicador { margin: 0 0 10px 0; font-size: 48px; font-weight: 700; color: var(--cor-secundaria); }
+.cartao-indicador .descricao-indicador { margin: 0; font-size: 14px; color: #6c757d; }
+@media (max-width: 800px) { #sistemaContainer { flex-direction: column; } #menuLateral { width: 100%; height: auto; flex-direction: row; align-items: center; padding: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); justify-content: space-between; } #menuLateral .menu-header { margin: 0; } #toggleMenuBtn { display: none; } #menuLateral .menu-header h2 { display: block; } #menuLateral ul { display: flex; gap: 10px; margin: 0 20px; flex-grow: 0; } #menuLateral ul li a { padding: 8px 12px; margin: 0; font-size: 14px; } #menuLateral .menu-footer { margin-left: auto; } #conteudoPrincipal { padding: 20px; } }
+@media (max-width: 600px) { #telaLogin h1 { font-size: 32px; text-align: center; } #telaLogin form { width: 85%; padding: 30px; } #botaoLogout { padding: 12px 18px; font-size: 16px; } }
+@media (max-width: 480px) { #menuLateral { flex-wrap: wrap; justify-content: center; gap: 10px; } #menuLateral .menu-header { display: none; } #menuLateral ul { margin: 0; gap: 5px; flex-grow: 1; justify-content: center; } #menuLateral ul li a { font-size: 12px; padding: 8px 10px; } #menuLateral .menu-footer { margin: 0; width: 100%; text-align: center; } #botaoLogout { width: auto; padding: 8px 15px; } }

@@ -3,19 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reflexo Rápido</title>
+    <title>Sistema SENAC</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
-
+    
     <link rel="stylesheet" href="style.css">
-
 </head>
 <body>
 
     <div id="telaLogin">
-        <h1>Reflexo Rápido</h1>
+        <h1>SENAC Reflexo Rápido</h1>
         <form id="formLogin">
             <label for="nome">Nome Completo:</label>
             <input type="text" id="nome" required placeholder="Digite seu nome aqui...">
@@ -30,9 +29,118 @@
         </form>
     </div>
 
-    <div id="containerJogo" class="escondido">
-        <canvas id="telaJogo"></canvas>
-        <button id="botaoLogout">Logout</button>
+    <div id="sistemaContainer" class="escondido">
+        
+        <nav id="menuLateral">
+            <div class="menu-header">
+                <button id="toggleMenuBtn">☰</button>
+                <h2>SENAC</h2>
+            </div>
+            <ul>
+                <li><a href="#" data-target="dashboard">Dashboard</a></li>
+                <li><a href="#" data-target="relatorios">Relatórios</a></li>
+                <li><a href="#" data-target="usuarios">Usuários</a></li>
+            </ul>
+            <div class="menu-footer">
+                <button id="botaoLogout">Logout</button>
+            </div>
+        </nav>
+
+        <main id="conteudoPrincipal">
+            
+            <section id="dashboard" class="secao-conteudo">
+                <div id="containerJogo">
+                    <canvas id="telaJogo"></canvas>
+                </div>
+            </section>
+
+            <section id="relatorios" class="secao-conteudo escondido">
+                <h1>Relatórios e Indicadores</h1>
+                
+                <div class="indicadores-container">
+                    <div class="cartao-indicador">
+                        <h3>Total de Usuários</h3>
+                        <p class="numero-indicador">5</p>
+                        <p class="descricao-indicador">Usuários cadastrados no sistema</p>
+                    </div>
+                    <div class="cartao-indicador">
+                        <h3>Usuários Ativos</h3>
+                        <p class="numero-indicador">3</p>
+                        <p class="descricao-indicador">Usuários com status "Ativo"</p>
+                    </div>
+                    <div class="cartao-indicador">
+                        <h3>Pontuação Máxima</h3>
+                        <p class="numero-indicador">2870</p>
+                        <p class="descricao-indicador">Maior pontuação registrada no jogo</p>
+                    </div>
+                    <div class="cartao-indicador">
+                        <h3>Nível Médio</h3>
+                        <p class="numero-indicador">3.2</p>
+                        <p class="descricao-indicador">Média de nível alcançado pelos jogadores</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="usuarios" class="secao-conteudo escondido">
+                <h1>Gerenciamento de Usuários</h1>
+                
+                <div class="ferramentas-tabela">
+                    <input type="text" id="filtroUsuarios" placeholder="Pesquisar por nome...">
+                </div>
+                
+                <div class="tabela-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome Completo</th>
+                                <th>E-mail</th>
+                                <th>Telefone</th>
+                                <th>Data de Cadastro</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="corpoTabelaUsuarios">
+                            <tr>
+                                <td>Ana Silva</td>
+                                <td>ana.silva@email.com</td>
+                                <td>(47) 99988-7766</td>
+                                <td>15/08/2025</td>
+                                <td><span class="status ativo">Ativo</span></td>
+                            </tr>
+                            <tr>
+                                <td>Bruno Costa</td>
+                                <td>bruno.costa@email.com</td>
+                                <td>(47) 98877-6655</td>
+                                <td>14/08/2025</td>
+                                <td><span class="status ativo">Ativo</span></td>
+                            </tr>
+                            <tr>
+                                <td>Carlos Souza</td>
+                                <td>carlos.souza@email.com</td>
+                                <td>(47) 99911-2233</td>
+                                <td>13/08/2025</td>
+                                <td><span class="status inativo">Inativo</span></td>
+                            </tr>
+                            <tr>
+                                <td>Daniela Ferreira</td>
+                                <td>daniela.f@email.com</td>
+                                <td>(47) 98844-5566</td>
+                                <td>12/08/2025</td>
+                                <td><span class="status ativo">Ativo</span></td>
+                            </tr>
+                            <tr>
+                                <td>Eduardo Lima</td>
+                                <td>edu.lima@email.com</td>
+                                <td>(47) 99222-3344</td>
+                                <td>11/08/2025</td>
+                                <td><span class="status pendente">Pendente</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </main>
     </div>
 
     <script src="script.js"></script>

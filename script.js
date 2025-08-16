@@ -1,30 +1,51 @@
-// ===============================================
-// PASSO 1: CONFIGURAÇÃO INICIAL (SETUP)
-// ===============================================
-
 const canvas = document.getElementById('telaJogo');
-// ALTERAÇÃO: Define o tamanho do canvas para preencher a tela inteira do dispositivo
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
 const ctx = canvas.getContext('2d');
 const telaLogin = document.getElementById('telaLogin');
-const containerJogo = document.getElementById('containerJogo');
 const formLogin = document.getElementById('formLogin');
 const inputNome = document.getElementById('nome');
 const botaoLogout = document.getElementById('botaoLogout');
+const sistemaContainer = document.getElementById('sistemaContainer');
+const menuLinks = document.querySelectorAll('#menuLateral a');
+const secoesConteudo = document.querySelectorAll('.secao-conteudo');
+const filtroUsuariosInput = document.getElementById('filtroUsuarios');
+const corpoTabelaUsuarios = document.getElementById('corpoTabelaUsuarios');
+const toggleMenuBtn = document.getElementById('toggleMenuBtn');
+const somDoClique = new Audio('click.mp3');
 
 let pontuacao = 0;
 let estadoDoJogo = 'login';
 let nomeDoJogador = '';
-
+let nivelAtual = 0;
 const PONTUACAO_VITORIA = 3000;
 
-// ... (O resto do arquivo continua exatamente igual) ...
+const niveis = [
+    { pontuacaoParaPassar: 500,  velocidadeBase: 3, tamanhoAlvo: 50, cor: '#005594' },
+    { pontuacaoParaPassar: 1000, velocidadeBase: 5, tamanhoAlvo: 40, cor: '#0073b1' },
+    { pontuacaoParaPassar: 2000, velocidadeBase: 7, tamanhoAlvo: 30, cor: '#f7941d' },
+    { pontuacaoParaPassar: 3000, velocidadeBase: 9, tamanhoAlvo: 25, cor: '#cc0000' }
+];
 
 const alvo = {
-    x: 50, y: 50, largura: 40, altura: 40, cor: '#005594', velocidadeX: 3, velocidadeY: 3
+    x: 50, y: 50, largura: 50, altura: 50, cor: '#005594', velocidadeX: 3, velocidadeY: 3
 };
+
+function iniciarNivel(indiceNivel) {
+    if (indiceNivel >= niveis.length) return;
+    const configNivel = niveis[indiceNivel];
+    alvo.largura = configNivel.tamanhoAlvo;
+    alvo.altura = configNivel.tamanhoAlvo;
+    alvo.cor = configNivel.cor;
+    const direcaoX = Math.sign(alvo.velocidadeX) || 1;
+    const direcaoY = Math.sign(alvo.velocidadeY) || 1;
+    alvo.velocidadeX = configNivel.velocidadeBase * direcaoX;
+    alvo.velocidadeY = configNivel.velocidadeBase * direcaoY;
+}
+
+function ajustarTamanhoCanvas() {
+    const container = document.getElementById('containerJogo');
+    canvas.width = container.clientWidth;
+    canvas.height = container.clientHeight;
+}
 
 formLogin.addEventListener('submit', function(evento) {
     evento.preventDefault();
@@ -34,8 +55,11 @@ formLogin.addEventListener('submit', function(evento) {
         return;
     }
     telaLogin.classList.add('escondido');
-    containerJogo.classList.remove('escondido');
+    sistemaContainer.classList.remove('escondido');
+    ajustarTamanhoCanvas();
+    mostrarSecao('dashboard');
     estadoDoJogo = 'jogando';
+    iniciarNivel(nivelAtual);
     gameLoop(); 
 });
 
@@ -43,23 +67,85 @@ botaoLogout.addEventListener('click', function() {
     location.reload();
 });
 
-canvas.addEventListener('click', function(evento) {
+menuLinks.forEach(link => {
+    link.addEventListener('click', (evento) => {
+        evento.preventDefault();
+        const targetId = link.dataset.target;
+        mostrarSecao(targetId);
+    });
+});
+
+function mostrarSecao(id) {
+    secoesConteudo.forEach(secao => secao.classList.add('escondido'));
+    menuLinks.forEach(link => link.classList.remove('active'));
+    const secaoAlvo = document.getElementById(id);
+    if (secaoAlvo) secaoAlvo.classList.remove('escondido');
+    const linkAtivo = document.querySelector(`a[data-target="${id}"]`);
+    if (linkAtivo) linkAtivo.classList.add('active');
+}
+
+if (toggleMenuBtn) {
+    toggleMenuBtn.addEventListener('click', () => {
+        sistemaContainer.classList.toggle('menu-fechado');
+        toggleMenuBtn.classList.toggle('ativo');
+        setTimeout(() => {
+            ajustarTamanhoCanvas();
+        }, 300);
+    });
+}
+
+if (filtroUsuariosInput && corpoTabelaUsuarios) {
+    filtroUsuariosInput.addEventListener('keyup', () => {
+        const termoBusca = filtroUsuariosInput.value.toLowerCase();
+        const linhas = corpoTabelaUsuarios.getElementsByTagName('tr');
+        for (let linha of linhas) {
+            const celulaNome = linha.getElementsByTagName('td')[0];
+            if (celulaNome) {
+                const nomeUsuario = celulaNome.textContent.toLowerCase();
+                if (nomeUsuario.includes(termoBusca)) {
+                    linha.style.display = '';
+                } else {
+                    linha.style.display = 'none';
+                }
+            }
+        }
+    });
+}
+
+function tratarCliqueOuToque(evento) {
     if (estadoDoJogo !== 'jogando') return;
+    evento.preventDefault();
     const rect = canvas.getBoundingClientRect();
-    const mouseX = evento.clientX - rect.left;
-    const mouseY = evento.clientY - rect.top;
-    if (mouseX >= alvo.x && mouseX <= alvo.x + alvo.largura &&
-        mouseY >= alvo.y && mouseY <= alvo.y + alvo.altura) {
+    let mouseX, mouseY;
+    if (evento.touches) {
+        mouseX = evento.touches[0].clientX - rect.left;
+        mouseY = evento.touches[0].clientY - rect.top;
+    } else {
+        mouseX = evento.clientX - rect.left;
+        mouseY = evento.clientY - rect.top;
+    }
+    const padding = 15;
+    if (mouseX >= alvo.x - padding && mouseX <= alvo.x + alvo.largura + padding &&
+        mouseY >= alvo.y - padding && mouseY <= alvo.y + alvo.altura + padding) {
+        
+        somDoClique.currentTime = 0;
+        somDoClique.play();
         pontuacao += 10;
-        if (pontuacao % 100 === 0 && pontuacao > 0) {
-            alvo.velocidadeX *= 1.1;
-            alvo.velocidadeY *= 1.1;
+        
+        if (nivelAtual < niveis.length && pontuacao >= niveis[nivelAtual].pontuacaoParaPassar) {
+            nivelAtual++;
+            if (nivelAtual < niveis.length) {
+                iniciarNivel(nivelAtual);
+            }
         }
         if (pontuacao >= PONTUACAO_VITORIA) {
             estadoDoJogo = 'vitoria';
         }
     }
-});
+}
+
+canvas.addEventListener('click', tratarCliqueOuToque);
+canvas.addEventListener('touchstart', tratarCliqueOuToque, { passive: false });
 
 function gameLoop() {
     if (estadoDoJogo === 'jogando') {
@@ -74,13 +160,35 @@ function gameLoop() {
         ctx.fillStyle = alvo.cor;
         ctx.fillRect(alvo.x, alvo.y, alvo.largura, alvo.altura);
         
-        ctx.fillStyle = '#000000';
-        ctx.font = '24px Poppins, sans-serif';
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+        ctx.fillRect(0, 0, canvas.width, 50);
+
+        ctx.fillStyle = '#FFFFFF';
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+        ctx.shadowBlur = 4;
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
+
+        let tamanhoFonte = 22;
+        let yPosTexto = 35;
+        
+        if (canvas.width < 600) {
+            tamanhoFonte = 14;
+            yPosTexto = 32;
+        }
+        
+        ctx.font = `bold ${tamanhoFonte}px Poppins, sans-serif`;
+        
         ctx.textAlign = 'left';
-        ctx.fillText('Pontuação: ' + pontuacao, 10, 30);
+        ctx.fillText('Pontuação: ' + pontuacao, 15, yPosTexto);
+        
+        ctx.textAlign = 'center';
+        ctx.fillText(`Nível: ${nivelAtual + 1}`, canvas.width / 2, yPosTexto);
         
         ctx.textAlign = 'right';
-        ctx.fillText(nomeDoJogador, canvas.width - 10, 30);
+        ctx.fillText(nomeDoJogador, canvas.width - 15, yPosTexto);
+
+        ctx.shadowColor = 'transparent';
 
     } else if (estadoDoJogo === 'vitoria') {
         ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
