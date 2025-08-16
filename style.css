@@ -1,0 +1,157 @@
+/* --- VARIÁVEIS DE COR (MODERNIZAÇÃO) --- */
+:root {
+    --cor-primaria: #005594;
+    --cor-secundaria: #003b6c;
+    --cor-destaque: #f7941d;
+    --cor-destaque-hover: #ffad4b;
+    --cor-perigo: #cc0000;
+    --cor-perigo-hover: #ff4444;
+    --cor-texto: white;
+}
+
+/* --- ANIMAÇÃO DO FUNDO --- */
+@keyframes animatedGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    overflow: hidden;
+}
+
+#containerJogo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #e9ebee;
+}
+
+canvas {
+    border: none;
+    display: block;
+    border-radius: 15px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+#telaLogin {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--cor-primaria), var(--cor-secundaria), #0073b1);
+    background-size: 200% 200%;
+    animation: animatedGradient 15s ease infinite;
+    color: var(--cor-texto);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+#telaLogin h1 {
+    font-size: 48px;
+    font-weight: 700;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+}
+
+#telaLogin form {
+    background-color: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    font-size: 16px;
+    width: 350px;
+    transition: all 0.3s ease;
+}
+
+#telaLogin input {
+    padding: 15px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: var(--cor-texto);
+    transition: all 0.3s ease;
+}
+
+#telaLogin input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+#telaLogin input:focus {
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
+#telaLogin button {
+    padding: 15px;
+    font-size: 18px;
+    font-weight: 700;
+    background-color: var(--cor-destaque);
+    color: var(--cor-texto);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#telaLogin button:hover {
+    background-color: var(--cor-destaque-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+#botaoLogout {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 15px;
+    background-color: var(--cor-perigo);
+    color: var(--cor-texto);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    transition: all 0.3s ease;
+}
+
+#botaoLogout:hover {
+    background-color: var(--cor-perigo-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+}
+
+.escondido {
+    display: none !important;
+}
+
+/* --- ADIÇÃO: REGRAS PARA TELAS PEQUENAS (RESPONSIVIDADE) --- */
+@media (max-width: 600px) {
+    #telaLogin h1 {
+        font-size: 32px;
+        text-align: center;
+    }
+
+    #telaLogin form {
+        width: 85%;
+        padding: 30px;
+    }
+
+    #botaoLogout {
+        padding: 12px 18px;
+        font-size: 16px;
+    }
+}
