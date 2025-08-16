@@ -1,5 +1,10 @@
+// ===============================================
+// PASSO 1: CONFIGURAÇÃO INICIAL E ELEMENTOS DO HTML
+// ===============================================
+
 const canvas = document.getElementById('telaJogo');
 const ctx = canvas.getContext('2d');
+
 const telaLogin = document.getElementById('telaLogin');
 const formLogin = document.getElementById('formLogin');
 const inputNome = document.getElementById('nome');
@@ -7,9 +12,13 @@ const botaoLogout = document.getElementById('botaoLogout');
 const sistemaContainer = document.getElementById('sistemaContainer');
 const menuLinks = document.querySelectorAll('#menuLateral a');
 const secoesConteudo = document.querySelectorAll('.secao-conteudo');
+
 const filtroUsuariosInput = document.getElementById('filtroUsuarios');
 const corpoTabelaUsuarios = document.getElementById('corpoTabelaUsuarios');
+
 const toggleMenuBtn = document.getElementById('toggleMenuBtn');
+const themeSwitch = document.getElementById('checkbox');
+
 const somDoClique = new Audio('click.mp3');
 
 let pontuacao = 0;
@@ -18,12 +27,20 @@ let nomeDoJogador = '';
 let nivelAtual = 0;
 const PONTUACAO_VITORIA = 3000;
 
+// ===============================================
+// PASSO 2: CONFIGURAÇÃO DOS NÍVEIS
+// ===============================================
+
 const niveis = [
     { pontuacaoParaPassar: 500,  velocidadeBase: 3, tamanhoAlvo: 50, cor: '#005594' },
     { pontuacaoParaPassar: 1000, velocidadeBase: 5, tamanhoAlvo: 40, cor: '#0073b1' },
     { pontuacaoParaPassar: 2000, velocidadeBase: 7, tamanhoAlvo: 30, cor: '#f7941d' },
     { pontuacaoParaPassar: 3000, velocidadeBase: 9, tamanhoAlvo: 25, cor: '#cc0000' }
 ];
+
+// ===============================================
+// PASSO 3: OBJETO DE JOGO E FUNÇÕES DO JOGO
+// ===============================================
 
 const alvo = {
     x: 50, y: 50, largura: 50, altura: 50, cor: '#005594', velocidadeX: 3, velocidadeY: 3
@@ -41,10 +58,16 @@ function iniciarNivel(indiceNivel) {
     alvo.velocidadeY = configNivel.velocidadeBase * direcaoY;
 }
 
+// ===============================================
+// PASSO 4: LÓGICA DE NAVEGAÇÃO E INTERFACE
+// ===============================================
+
 function ajustarTamanhoCanvas() {
     const container = document.getElementById('containerJogo');
-    canvas.width = container.clientWidth;
-    canvas.height = container.clientHeight;
+    if (container) {
+        canvas.width = container.clientWidth;
+        canvas.height = container.clientHeight;
+    }
 }
 
 formLogin.addEventListener('submit', function(evento) {
@@ -56,7 +79,9 @@ formLogin.addEventListener('submit', function(evento) {
     }
     telaLogin.classList.add('escondido');
     sistemaContainer.classList.remove('escondido');
+    
     ajustarTamanhoCanvas();
+
     mostrarSecao('dashboard');
     estadoDoJogo = 'jogando';
     iniciarNivel(nivelAtual);
@@ -78,8 +103,10 @@ menuLinks.forEach(link => {
 function mostrarSecao(id) {
     secoesConteudo.forEach(secao => secao.classList.add('escondido'));
     menuLinks.forEach(link => link.classList.remove('active'));
+
     const secaoAlvo = document.getElementById(id);
     if (secaoAlvo) secaoAlvo.classList.remove('escondido');
+
     const linkAtivo = document.querySelector(`a[data-target="${id}"]`);
     if (linkAtivo) linkAtivo.classList.add('active');
 }
@@ -111,6 +138,26 @@ if (filtroUsuariosInput && corpoTabelaUsuarios) {
         }
     });
 }
+
+if (themeSwitch) {
+    const currentTheme = localStorage.getItem('theme');
+    if (currentTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+        themeSwitch.checked = true;
+    }
+    themeSwitch.addEventListener('change', () => {
+        document.body.classList.toggle('dark-mode');
+        let theme = 'light';
+        if (document.body.classList.contains('dark-mode')) {
+            theme = 'dark';
+        }
+        localStorage.setItem('theme', theme);
+    });
+}
+
+// ===============================================
+// PASSO 5: LÓGICA DE TOQUE/CLIQUE DO JOGO
+// ===============================================
 
 function tratarCliqueOuToque(evento) {
     if (estadoDoJogo !== 'jogando') return;
@@ -146,6 +193,10 @@ function tratarCliqueOuToque(evento) {
 
 canvas.addEventListener('click', tratarCliqueOuToque);
 canvas.addEventListener('touchstart', tratarCliqueOuToque, { passive: false });
+
+// ===============================================
+// PASSO 6: GAME LOOP PRINCIPAL
+// ===============================================
 
 function gameLoop() {
     if (estadoDoJogo === 'jogando') {
